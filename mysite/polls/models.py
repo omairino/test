@@ -27,7 +27,7 @@ class FacebookLabel(models.Model):
 
 
 class facebookrequest:
-    def __init__(self, access_token, users_id, custom_label_id,page_id):
+    def __init__(self, access_token, users_id, custom_label_id, page_id):
         self.data = {'access_token': access_token}
         self.headers = {'Content-Type': 'application/json', }
         self.batch = []
@@ -45,20 +45,20 @@ class facebookrequest:
             self.page = FacebookPage(access_token=access_token, original_id=page_id)  # fill database table FacebookPage
             self.page.save()
         else:
-           self.page = FacebookPage.objects.get(original_id=str(page_id))
-
-
+            self.page = FacebookPage.objects.get(original_id=str(page_id))
 
     def multipleRequests(self):
         response = requests.post('https://graph.facebook.com', self.data, headers=self.headers)
         dectResult = {}
         for i in range(0, self.length):
-            print(i)
+
             if "success" in response.json()[i]['body']:
                 dectResult[self.users_id1[i]] = True
 
-                if not FacebookLabel.objects.filter(owner=User.objects.get(user_id = str(self.users_id1[i])),page=self.page,label_id = self.label_id).exists():
-                    label = FacebookLabel(owner=User.objects.get(user_id = str(self.users_id1[i])),page=self.page,label_id = self.label_id)
+                if not FacebookLabel.objects.filter(owner=User.objects.get(user_id=str(self.users_id1[i])),
+                                                    page=self.page, label_id=self.label_id).exists():
+                    label = FacebookLabel(owner=User.objects.get(user_id=str(self.users_id1[i])), page=self.page,
+                                          label_id=self.label_id)
                     label.save()
             else:
                 dectResult[self.users_id1[i]] = "Null"
